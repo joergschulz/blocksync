@@ -42,7 +42,7 @@ def getblocks(f, blocksize):
 
 def server(dev, blocksize):
     print dev, blocksize
-    f, size = do_open(dev, 'r+')
+    f, size = do_open(dev, 'r+b')
     print size
     sys.stdout.flush()
 
@@ -84,7 +84,7 @@ def sync(srcdev, dsthost, dstdev=None, blocksize=1024 * 1024):
         sys.exit(1)
 
     try:
-        f, size = do_open(srcdev, 'r')
+        f, size = do_open(srcdev, 'rb')
     except Exception, e:
         print "Error accessing source device! %s" % e
         sys.exit(1)
