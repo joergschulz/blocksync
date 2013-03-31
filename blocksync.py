@@ -52,7 +52,7 @@ def server(dev, blocksize):
         res = sys.stdin.readline()
         if res != SAME:
             newblock = sys.stdin.read(blocksize)
-            f.seek(-len(newblock), 1)
+            f.seek(-len(block), 1)
             f.write(newblock)
 
 
