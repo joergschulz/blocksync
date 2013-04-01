@@ -16,7 +16,7 @@ Getting started:
 """
 
 import sys
-from sha import sha
+from hashlib import sha1
 import subprocess
 import time
 
@@ -47,7 +47,7 @@ def server(dev, blocksize):
     sys.stdout.flush()
 
     for block in getblocks(f, blocksize):
-        print sha(block).hexdigest()
+        print sha1(block).hexdigest()
         sys.stdout.flush()
         res = sys.stdin.readline()
         if res != SAME:
@@ -106,7 +106,7 @@ def sync(srcdev, dsthost, dstdev=None, blocksize=1024 * 1024):
     t_last = t0
     size_blocks = size / blocksize
     for i, l_block in enumerate(getblocks(f, blocksize)):
-        l_sum = sha(l_block).hexdigest()
+        l_sum = sha1(l_block).hexdigest()
         r_sum = p_out.readline().strip()
 
         if l_sum == r_sum:
