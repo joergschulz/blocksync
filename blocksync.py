@@ -95,9 +95,6 @@ def sync(srcdev, dsthost, dstdev=None, blocksize=1024 * 1024):
         print "Error accessing device on remote host!"
         sys.exit(1)
     remote_size = int(line)
-    if size != remote_size:
-        print "Source device size (%d) doesn't match remote device size (%d)!" % (size, remote_size)
-        sys.exit(1)
 
     same_blocks = diff_blocks = 0
 
