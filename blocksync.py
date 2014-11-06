@@ -57,7 +57,7 @@ def server(dev, blocksize):
             f.write(newblock)
 
 
-def sync(srcdev, dsthost, dstdev, blocksize, compress):
+def sync(srcdev, dsthost, dstdev, blocksize, compress, progress):
 
     if not dstdev:
         dstdev = srcdev
@@ -120,11 +120,12 @@ def sync(srcdev, dsthost, dstdev, blocksize, compress):
             p_in.flush()
             diff_blocks += 1
 
-        t1 = time.time()
-        if t1 - t_last > 1 or (same_blocks + diff_blocks) >= size_blocks:
-            rate = (i + 1.0) * blocksize / (MIBI * (t1 - t0))
-            print "\rsame: %d, diff: %d, %d/%d, %5.1f MB/s" % (same_blocks, diff_blocks, same_blocks + diff_blocks, size_blocks, rate),
-            t_last = t1
+        if progress:
+            t1 = time.time()
+            if t1 - t_last > 1 or (same_blocks + diff_blocks) >= size_blocks:
+                rate = (i + 1.0) * blocksize / (MIBI * (t1 - t0))
+                print "\rsame: %d, diff: %d, %d/%d, %5.1f MB/s" % (same_blocks, diff_blocks, same_blocks + diff_blocks, size_blocks, rate),
+                t_last = t1
 
     print "\n\nCompleted in %d seconds" % (time.time() - t0)
 
@@ -153,4 +154,4 @@ if __name__ == "__main__":
             dstdev = args[2]
         else:
             dstdev = None
-        sync(srcdev, dsthost, dstdev, options.blocksize, options.compress)
+        sync(srcdev, dsthost, dstdev, options.blocksize, options.compress, options.progress)
