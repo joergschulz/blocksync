@@ -64,9 +64,9 @@ def sync(srcdev, dsthost, dstdev=None, blocksize=MIBI, compress):
 
     print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
     if compress:
-        cmd = ['ssh', '-C', '-c', 'blowfish', dsthost, 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
+        cmd = ['ssh', '-C', '-c', 'arcfour', dsthost, 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
     else:
-        cmd = ['ssh',       '-c', 'blowfish', dsthost, 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
+        cmd = ['ssh',       '-c', 'arcfour', dsthost, 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
     print "Running: %s" % " ".join(cmd)
 
     p = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
