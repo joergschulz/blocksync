@@ -63,7 +63,6 @@ def sync(srcdev, dsthost, dstdev=None, blocksize=MIBI, compress):
         dstdev = srcdev
 
     print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
-    # cmd = ['ssh', '-C', '-c', 'blowfish', dsthost, 'sudo', 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
     if compress:
         cmd = ['ssh', '-C', '-c', 'blowfish', dsthost, 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
     else:
