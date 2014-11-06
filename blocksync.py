@@ -135,7 +135,7 @@ if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] /dev/source user@remotehost [/dev/dest]")
     parser.add_option("-b", "--blocksize", dest="blocksize", action="store", type="int", help="block size (bytes)", default=MIBI)
-    parser.add_option("-c", "--compress",  dest="compess",   action="store_true", default=False, help="block size (bytes)")
+    parser.add_option("-c", "--compress",  dest="compress",  action="store_true", default=False, help="block size (bytes)")
     (options, args) = parser.parse_args()
 
     if len(args) < 2:
