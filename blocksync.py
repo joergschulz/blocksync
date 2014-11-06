@@ -42,10 +42,7 @@ def getblocks(f, blocksize):
 
 
 def server(dev, blocksize):
-    print dev, blocksize
     f, size = do_open(dev, 'r+b')
-    print size
-    sys.stdout.flush()
 
     for block in getblocks(f, blocksize):
         print sha1(block).hexdigest()
@@ -72,30 +69,10 @@ def sync(srcdev, dsthost, dstdev, blocksize, compress, progress):
     p = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
     p_in, p_out = p.stdin, p.stdout
 
-    line = p_out.readline()
-    p.poll()
-    if p.returncode is not None:
-        print "Error connecting to or invoking blocksync on the remote host!"
-        sys.exit(1)
-
-    a, b = line.split()
-    if a != dstdev:
-        print "Dest device (%s) doesn't match with the remote host (%s)!" % (dstdev, a)
-        sys.exit(1)
-    if int(b) != blocksize:
-        print "Source block size (%d) doesn't match with the remote host (%d)!" % (blocksize, int(b))
-        sys.exit(1)
-
     try:
         f, size = do_open(srcdev, 'rb')
     except Exception, e:
         print "Error accessing source device! %s" % e
-        sys.exit(1)
-
-    line = p_out.readline()
-    p.poll()
-    if p.returncode is not None:
-        print "Error accessing device on remote host!"
         sys.exit(1)
 
     same_blocks = diff_blocks = 0
