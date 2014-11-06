@@ -107,7 +107,7 @@ def sync(srcdev, dsthost, dstdev, blocksize, compress, progress):
 
 if __name__ == "__main__":
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options] file:///path/to/source user@remotehost file:///path/to/dest")
+    parser = OptionParser(usage="%prog [options] file://<source> ssh://[<user>@]<host>/<dest>")
     parser.add_option("-b", "--blocksize", dest="blocksize", action="store", type="int", help="block size (bytes)", default=MIBI)
     parser.add_option("-c", "--compress",  dest="compress",  action="store_true", default=False, help="use compression")
     parser.add_option("-p", "--progress",  dest="progress",  action="store_true", default=False, help="display progress")
@@ -118,11 +118,18 @@ if __name__ == "__main__":
         server(dstdev, options.blocksize)
         sys.exit(0)
 
-    uri = re.compile(r'file://(?P<path>.+)')
+    uri = re.compile(r'(?P<proto>\w+)://(((?P<user>\w+)@)?(?P<host>[\w\.]+)/)?(?P<path>.+)')
+
     try:
-        srcdev = uri.match(args[0]).groupdict()['path']
-        dsthost = args[1]
-        dstdev = uri.match(args[2]).groupdict()['path']
+        src=uri.match(args[0]).groupdict()
+        dst=uri.match(args[1]).groupdict()
+        if not (src['proto'] == 'file' and not src['user'] and not src['host'] and src['path']):
+            raise Exception('invalid source')
+        if not (dst['proto'] == 'ssh' and dst['host'] and dst['path']):
+            raise Exception('invalid dest')
+        srcdev = src['path']
+        dsthost = '%(user)s@%(host)s' % dst if dst['user'] else '%(host)s' % dst
+        dstdev = dst['path']
     except:
         parser.print_help()
         print __doc__
