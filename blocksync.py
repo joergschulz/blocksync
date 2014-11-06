@@ -97,7 +97,6 @@ def sync(srcdev, dsthost, dstdev, blocksize, compress, progress):
     if p.returncode is not None:
         print "Error accessing device on remote host!"
         sys.exit(1)
-    remote_size = int(line)
 
     same_blocks = diff_blocks = 0
 
