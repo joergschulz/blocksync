@@ -22,6 +22,7 @@ import time
 
 SAME = "same\n"
 DIFF = "diff\n"
+MIBI = 1024*1024
 
 
 def do_open(f, mode):
@@ -56,12 +57,12 @@ def server(dev, blocksize):
             f.write(newblock)
 
 
-def sync(srcdev, dsthost, dstdev=None, blocksize=1024 * 1024):
+def sync(srcdev, dsthost, dstdev=None, blocksize=MIBI):
 
     if not dstdev:
         dstdev = srcdev
 
-    print "Block size is %0.1f MB" % (float(blocksize) / (1024 * 1024))
+    print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
     # cmd = ['ssh', '-C', '-c', 'blowfish', dsthost, 'sudo', 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
     cmd = ['ssh', '-C', '-c', 'blowfish', dsthost, 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
     print "Running: %s" % " ".join(cmd)
@@ -119,7 +120,7 @@ def sync(srcdev, dsthost, dstdev=None, blocksize=1024 * 1024):
 
         t1 = time.time()
         if t1 - t_last > 1 or (same_blocks + diff_blocks) >= size_blocks:
-            rate = (i + 1.0) * blocksize / (1024.0 * 1024.0) / (t1 - t0)
+            rate = (i + 1.0) * blocksize / (MIBI * (t1 - t0))
             print "\rsame: %d, diff: %d, %d/%d, %5.1f MB/s" % (same_blocks, diff_blocks, same_blocks + diff_blocks, size_blocks, rate),
             t_last = t1
 
@@ -130,7 +131,7 @@ def sync(srcdev, dsthost, dstdev=None, blocksize=1024 * 1024):
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] /dev/source user@remotehost [/dev/dest]")
-    parser.add_option("-b", "--blocksize", dest="blocksize", action="store", type="int", help="block size (bytes)", default=1024 * 1024)
+    parser.add_option("-b", "--blocksize", dest="blocksize", action="store", type="int", help="block size (bytes)", default=MIBI)
     parser.add_option("-c", "--compress",  dest="compess",   action="store_true", default=False, help="block size (bytes)")
     (options, args) = parser.parse_args()
 
