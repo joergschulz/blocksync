@@ -135,6 +135,7 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] /dev/source user@remotehost [/dev/dest]")
     parser.add_option("-b", "--blocksize", dest="blocksize", action="store", type="int", help="block size (bytes)", default=MIBI)
     parser.add_option("-c", "--compress",  dest="compress",  action="store_true", default=False, help="use compression")
+    parser.add_option("-p", "--progress",  dest="progress",  action="store_true", default=False, help="display progress")
     (options, args) = parser.parse_args()
 
     if len(args) < 2:
