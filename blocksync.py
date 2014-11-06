@@ -57,7 +57,7 @@ def server(dev, blocksize):
             f.write(newblock)
 
 
-def sync(srcdev, dsthost, dstdev=None, blocksize=MIBI, compress):
+def sync(srcdev, dsthost, dstdev, blocksize, compress):
 
     if not dstdev:
         dstdev = srcdev
