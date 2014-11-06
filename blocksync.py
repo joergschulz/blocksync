@@ -56,9 +56,6 @@ def server(dev, blocksize):
 
 def sync(srcdev, dsthost, dstdev, blocksize, compress, progress):
 
-    if not dstdev:
-        dstdev = srcdev
-
     print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
     if compress:
         cmd = ['ssh', '-C', '-c', 'arcfour', dsthost, 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
