@@ -109,13 +109,13 @@ def sync(srcdev, dsthost, dstdev, blocksize, compress, progress):
 
 if __name__ == "__main__":
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options] /dev/source user@remotehost [/dev/dest]")
+    parser = OptionParser(usage="%prog [options] /dev/source user@remotehost /dev/dest")
     parser.add_option("-b", "--blocksize", dest="blocksize", action="store", type="int", help="block size (bytes)", default=MIBI)
     parser.add_option("-c", "--compress",  dest="compress",  action="store_true", default=False, help="use compression")
     parser.add_option("-p", "--progress",  dest="progress",  action="store_true", default=False, help="display progress")
     (options, args) = parser.parse_args()
 
-    if len(args) < 2:
+    if len(args) < 3:
         parser.print_help()
         print __doc__
         sys.exit(1)
@@ -126,8 +126,5 @@ if __name__ == "__main__":
     else:
         srcdev = args[0]
         dsthost = args[1]
-        if len(args) > 2:
-            dstdev = args[2]
-        else:
-            dstdev = None
+        dstdev = args[2]
         sync(srcdev, dsthost, dstdev, options.blocksize, options.compress, options.progress)
