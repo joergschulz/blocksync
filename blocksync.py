@@ -15,6 +15,7 @@ Getting started:
     sudo python blocksync.py /dev/source user@remotehost /dev/dest
 """
 
+import re
 import sys
 from hashlib import sha1
 import subprocess
@@ -106,7 +107,7 @@ def sync(srcdev, dsthost, dstdev, blocksize, compress, progress):
 
 if __name__ == "__main__":
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options] /dev/source user@remotehost /dev/dest")
+    parser = OptionParser(usage="%prog [options] file:///path/to/source user@remotehost file:///path/to/dest")
     parser.add_option("-b", "--blocksize", dest="blocksize", action="store", type="int", help="block size (bytes)", default=MIBI)
     parser.add_option("-c", "--compress",  dest="compress",  action="store_true", default=False, help="use compression")
     parser.add_option("-p", "--progress",  dest="progress",  action="store_true", default=False, help="display progress")
@@ -121,7 +122,12 @@ if __name__ == "__main__":
         dstdev = args[1]
         server(dstdev, options.blocksize)
     else:
-        srcdev = args[0]
-        dsthost = args[1]
-        dstdev = args[2]
+        uri = re.compile(r'file://(?P<path>.+)')
+        try:
+            srcdev = uri.match(args[0]).groupdict()['path']
+            dsthost = args[1]
+            dstdev = uri.match(args[2]).groupdict()['path']
+        except:
+            parser.print_help()
+            sys.exit(1)
         sync(srcdev, dsthost, dstdev, options.blocksize, options.compress, options.progress)
