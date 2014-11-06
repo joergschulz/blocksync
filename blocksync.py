@@ -113,21 +113,19 @@ if __name__ == "__main__":
     parser.add_option("-p", "--progress",  dest="progress",  action="store_true", default=False, help="display progress")
     (options, args) = parser.parse_args()
 
-    if len(args) < 3:
+    if args[0] == 'server':
+        dstdev = args[1]
+        server(dstdev, options.blocksize)
+        sys.exit(0)
+
+    uri = re.compile(r'file://(?P<path>.+)')
+    try:
+        srcdev = uri.match(args[0]).groupdict()['path']
+        dsthost = args[1]
+        dstdev = uri.match(args[2]).groupdict()['path']
+    except:
         parser.print_help()
         print __doc__
         sys.exit(1)
 
-    if args[0] == 'server':
-        dstdev = args[1]
-        server(dstdev, options.blocksize)
-    else:
-        uri = re.compile(r'file://(?P<path>.+)')
-        try:
-            srcdev = uri.match(args[0]).groupdict()['path']
-            dsthost = args[1]
-            dstdev = uri.match(args[2]).groupdict()['path']
-        except:
-            parser.print_help()
-            sys.exit(1)
-        sync(srcdev, dsthost, dstdev, options.blocksize, options.compress, options.progress)
+    sync(srcdev, dsthost, dstdev, options.blocksize, options.compress, options.progress)
