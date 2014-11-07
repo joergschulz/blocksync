@@ -83,7 +83,7 @@ def sync(src, dst, options):
     p_in, p_out = p.stdin, p.stdout
 
     try:
-        f, size = do_open(srcdev, 'rb')
+        f, size = do_open(src['path'], 'rb')
     except Exception, e:
         print "Error accessing source device! %s" % e
         sys.exit(1)
