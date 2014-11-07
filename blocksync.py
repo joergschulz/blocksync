@@ -55,6 +55,23 @@ def server(dev, blocksize):
             f.write(newblock)
 
 
+def client(dev, blocksize):
+    f, size = do_open(dev, 'rb')
+
+    for l_block in getblocks(f, blocksize):
+        l_sum = sha1(l_block).hexdigest()
+        r_sum = sys.stdin.readline().strip()
+
+        if l_sum == r_sum:
+            sys.stdout.write(SAME)
+            sys.stdout.flush()
+        else:
+            sys.stdout.write(DIFF)
+            sys.stdout.flush()
+            sys.stdout.write(l_block)
+            sys.stdout.flush()
+
+
 def sync(src, dst, options):
 
     blocksize = options.blocksize
@@ -127,6 +144,11 @@ if __name__ == "__main__":
     parser.add_option("-c", "--compress",  dest="compress",  action="store_true", default=False, help="use compression")
     parser.add_option("-p", "--progress",  dest="progress",  action="store_true", default=False, help="display progress")
     (options, args) = parser.parse_args()
+
+    if args[0] == 'client':
+        srcdev = args[1]
+        client(srcdev, options.blocksize)
+        sys.exit(0)
 
     if args[0] == 'server':
         dstdev = args[1]
