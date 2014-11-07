@@ -133,11 +133,19 @@ if __name__ == "__main__":
         server(dstdev, options.blocksize)
         sys.exit(0)
 
-    uri = re.compile(r'(?P<proto>\w+)://(((?P<user>\w+)@)?(?P<host>[\w\.]+)/)?(?P<path>.+)')
+    umap = {'proto': None, 'user': None, 'host': None, 'path': None}
+    uris = [ re.compile(r'(?P<proto>file)://(?P<path>.+)'),
+             re.compile(r'(?P<proto>ssh)://((?P<user>\w+)@)?(?P<host>[\w\.]+)/(?P<path>.+)') ]
 
     try:
-        src=uri.match(args[0]).groupdict()
-        dst=uri.match(args[1]).groupdict()
+        src = dict(umap)
+        for uri in uris:
+            if uri.match(args[0]): break
+        src.update(uri.match(args[0]).groupdict())
+        dst = dict(umap)
+        for uri in uris:
+            if uri.match(args[1]): break
+        dst.update(uri.match(args[1]).groupdict())
         # syntax check
         for arg in [src, dst]:
             if ( not arg['path'] ) or \
