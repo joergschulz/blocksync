@@ -55,7 +55,14 @@ def server(dev, blocksize):
             f.write(newblock)
 
 
-def sync(srcdev, dsthost, dstdev, blocksize, compress, progress):
+def sync(src, dst, options):
+
+    srcdev    = src['path']
+    dsthost   = '%(user)s@%(host)s' % dst if dst['user'] else '%(host)s' % dst
+    dstdev    = dst['path']
+    blocksize = options.blocksize
+    compress  = options.compress
+    progress  = options.progress
 
     print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
     if compress:
@@ -127,12 +134,9 @@ if __name__ == "__main__":
             raise Exception('invalid source')
         if not (dst['proto'] == 'ssh' and dst['host'] and dst['path']):
             raise Exception('invalid dest')
-        srcdev = src['path']
-        dsthost = '%(user)s@%(host)s' % dst if dst['user'] else '%(host)s' % dst
-        dstdev = dst['path']
     except:
         parser.print_help()
         print __doc__
         sys.exit(1)
 
-    sync(srcdev, dsthost, dstdev, options.blocksize, options.compress, options.progress)
+    sync(src, dst, options)
