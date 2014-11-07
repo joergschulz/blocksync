@@ -57,9 +57,6 @@ def server(dev, blocksize):
 
 def sync(src, dst, options):
 
-    srcdev    = src['path']
-    dsthost   = '%(user)s@%(host)s' % dst if dst['user'] else '%(host)s' % dst
-    dstdev    = dst['path']
     blocksize = options.blocksize
     compress  = options.compress
     progress  = options.progress
@@ -67,13 +64,13 @@ def sync(src, dst, options):
     print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
 
     args = dict(dst)
-    args.update({'blocksize': options.blocksize})
+    args.update({'blocksize': blocksize})
 
     cmd = 'python blocksync.py -b %(blocksize)s server %(path)s' % args
 
     if dst['proto'] == 'ssh':
         args.update({
-            'compress' : '-C' if options.compress else '',
+            'compress' : '-C' if compress else '',
             'user'     : '-l %s' % dst['user'] if dst['user'] else '',
         })
         cmd = 'ssh -c arcfour %(compress)s %(user)s %(host)s ' % args + cmd
