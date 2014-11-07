@@ -65,10 +65,21 @@ def sync(src, dst, options):
     progress  = options.progress
 
     print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
-    if compress:
-        cmd = ['ssh', '-C', '-c', 'arcfour', dsthost, 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
-    else:
-        cmd = ['ssh',       '-c', 'arcfour', dsthost, 'python', 'blocksync.py', 'server', dstdev, '-b', str(blocksize)]
+
+    args = dict(dst)
+    args.update({'blocksize': options.blocksize})
+
+    cmd = 'python blocksync.py -b %(blocksize)s server %(path)s' % args
+
+    if dst['proto'] == 'ssh':
+        args.update({
+            'compress' : '-C' if options.compress else '',
+            'user'     : '-l %s' % dst['user'] if dst['user'] else '',
+        })
+        cmd = 'ssh -c arcfour %(compress)s %(user)s %(host)s ' % args + cmd
+
+    cmd = cmd.split()
+
     print "Running: %s" % " ".join(cmd)
 
     p = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
