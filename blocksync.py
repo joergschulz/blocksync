@@ -138,10 +138,16 @@ if __name__ == "__main__":
     try:
         src=uri.match(args[0]).groupdict()
         dst=uri.match(args[1]).groupdict()
-        if not (src['proto'] == 'file' and not src['user'] and not src['host'] and src['path']):
-            raise Exception('invalid source')
-        if not (dst['proto'] == 'ssh' and dst['host'] and dst['path']):
-            raise Exception('invalid dest')
+        # syntax check
+        for arg in [src, dst]:
+            if ( not arg['path'] ) or \
+               ( not (arg['proto'] == 'file' or arg['proto'] == 'ssh')   ) or \
+               ( arg['proto'] == 'file' and (arg['user'] or arg['host']) ) or \
+               ( arg['proto'] == 'ssh'  and             not arg['host']  ):
+                raise Exception('invalid uri')
+        # check if supported by program
+        if src['proto'] == 'ssh':
+            raise Exception('unsupported source')
     except:
         parser.print_help()
         print __doc__
