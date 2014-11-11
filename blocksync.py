@@ -189,7 +189,7 @@ def sync(src, dst, options):
 
 if __name__ == "__main__":
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options] file://<source> {file|ssh}://[[<user>@]<host>/]<dest>")
+    parser = OptionParser(usage="%prog [options] {file|ssh}://[[<user>@]<host>/]<source> {file|ssh}://[[<user>@]<host>/]<dest>")
     parser.add_option("-b", "--blocksize", dest="blocksize", action="store", type="int", help="block size (bytes)", default=MIBI)
     parser.add_option("-c", "--compress",  dest="compress",  action="store_true", default=False, help="use compression")
     parser.add_option("-p", "--progress",  dest="progress",  action="store_true", default=False, help="display progress")
@@ -225,9 +225,6 @@ if __name__ == "__main__":
                ( arg['proto'] == 'file' and (arg['user'] or arg['host']) ) or \
                ( arg['proto'] == 'ssh'  and             not arg['host']  ):
                 raise Exception('invalid uri')
-        # check if supported by program
-        if src['proto'] == 'ssh':
-            raise Exception('unsupported source')
     except:
         parser.print_help()
         print __doc__
