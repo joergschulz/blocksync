@@ -24,6 +24,7 @@ import time
 SAME = "same"
 DIFF = "diff"
 ABORT= "abort"
+EOL  = "\r\n"
 MIBI = 1024*1024
 
 
@@ -45,12 +46,12 @@ def getblocks(f, blocksize):
 
 def server(dev, blocksize):
     f, size = do_open(dev, 'r+b')
-    sys.stdout.write('%d\r\n' % size)
+    sys.stdout.write(('%d' % size)+EOL)
     sys.stdout.flush()
 
     for block in getblocks(f, blocksize):
         sum = sha1(block).hexdigest()
-        sys.stdout.write(sum+'\r\n')
+        sys.stdout.write(sum+EOL)
         sys.stdout.flush()
         res = sys.stdin.readline().strip()
         if res == DIFF:
@@ -63,12 +64,12 @@ def server(dev, blocksize):
 
 def client(dev, blocksize):
     f, size = do_open(dev, 'rb')
-    sys.stdout.write('%d\r\n' % size)
+    sys.stdout.write(('%d' % size)+EOL)
     sys.stdout.flush()
 
     for block in getblocks(f, blocksize):
         sum = sha1(block).hexdigest()
-        sys.stdout.write(sum+'\r\n')
+        sys.stdout.write(sum+EOL)
         sys.stdout.flush()
         res = sys.stdin.readline().strip()
         if res == DIFF:
@@ -135,10 +136,10 @@ def sync(src, dst, options):
     if c_size != s_size:
         print "size mismatch"
         c_out.readline().strip()
-        c_in.write(ABORT+'\r\n')
+        c_in.write(ABORT+EOL)
         c_in.flush()
         s_out.readline().strip()
-        s_in.write(ABORT+'\r\n')
+        s_in.write(ABORT+EOL)
         s_in.flush()
         sys.exit(1)
 
@@ -161,16 +162,16 @@ def sync(src, dst, options):
             sys.exit(1)
             pass
         if c_sum == s_sum:
-            c_in.write(SAME+'\r\n')
+            c_in.write(SAME+EOL)
             c_in.flush()
-            s_in.write(SAME+'\r\n')
+            s_in.write(SAME+EOL)
             s_in.flush()
             same_blocks += 1
         else:
-            c_in.write(DIFF+'\r\n')
+            c_in.write(DIFF+EOL)
             c_in.flush()
             block = c_out.read(blocksize)
-            s_in.write(DIFF+'\r\n')
+            s_in.write(DIFF+EOL)
             s_in.flush()
             s_in.write(block)
             diff_blocks += 1
