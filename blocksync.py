@@ -44,6 +44,8 @@ def getblocks(f, blocksize):
 
 def server(dev, blocksize):
     f, size = do_open(dev, 'r+b')
+    sys.stdout.write('%d\r\n' % size)
+    sys.stdout.flush()
 
     for block in getblocks(f, blocksize):
         sum = sha1(block).hexdigest()
@@ -58,6 +60,8 @@ def server(dev, blocksize):
 
 def client(dev, blocksize):
     f, size = do_open(dev, 'rb')
+    sys.stdout.write('%d\r\n' % size)
+    sys.stdout.flush()
 
     for block in getblocks(f, blocksize):
         sum = sha1(block).hexdigest()
@@ -96,6 +100,9 @@ def sync(src, dst, options):
     p = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
     p_in, p_out = p.stdin, p.stdout
 
+    p_size = p_out.readline().strip()
+    p_size = int(p_size)
+
     args = dict(src)
     args.update({'blocksize': blocksize})
 
@@ -114,6 +121,9 @@ def sync(src, dst, options):
 
     # c = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
     # c_in, c_out = c.stdin, c.stdout
+
+    # c_size = c_out.readline().strip()
+    # c_size = int(c_size)
 
     try:
         f, size = do_open(src['path'], 'rb')
