@@ -97,11 +97,11 @@ def sync(src, dst, options):
 
     print "Running: %s" % " ".join(cmd)
 
-    p = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
-    p_in, p_out = p.stdin, p.stdout
+    s = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
+    s_in, s_out = s.stdin, s.stdout
 
-    p_size = p_out.readline().strip()
-    p_size = int(p_size)
+    s_size = s_out.readline().strip()
+    s_size = int(s_size)
 
     args = dict(src)
     args.update({'blocksize': blocksize})
@@ -137,24 +137,24 @@ def sync(src, dst, options):
         c_sum = c_out.readline().strip()
         if c_sum == '':
             break
-        p_sum = p_out.readline().strip()
-        if p_sum == '':
+        s_sum = s_out.readline().strip()
+        if s_sum == '':
             # TODO
             sys.exit(1)
             pass
-        if c_sum == p_sum:
+        if c_sum == s_sum:
             c_in.write(SAME+'\r\n')
             c_in.flush()
-            p_in.write(SAME+'\r\n')
-            p_in.flush()
+            s_in.write(SAME+'\r\n')
+            s_in.flush()
             same_blocks += 1
         else:
             c_in.write(DIFF+'\r\n')
             c_in.flush()
             block = c_out.read(blocksize)
-            p_in.write(DIFF+'\r\n')
-            p_in.flush()
-            p_in.write(block)
+            s_in.write(DIFF+'\r\n')
+            s_in.flush()
+            s_in.write(block)
             diff_blocks += 1
 
         if progress:
