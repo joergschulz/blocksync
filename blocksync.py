@@ -21,8 +21,8 @@ from hashlib import sha1
 import subprocess
 import time
 
-SAME = "same\n"
-DIFF = "diff\n"
+SAME = "same"
+DIFF = "diff"
 MIBI = 1024*1024
 
 
@@ -46,9 +46,10 @@ def server(dev, blocksize):
     f, size = do_open(dev, 'r+b')
 
     for block in getblocks(f, blocksize):
-        print sha1(block).hexdigest()
+        sum = sha1(block).hexdigest()
+        sys.stdout.write(sum+'\r\n')
         sys.stdout.flush()
-        res = sys.stdin.readline()
+        res = sys.stdin.readline().strip()
         if res != SAME:
             newblock = sys.stdin.read(blocksize)
             f.seek(-len(block), 1)
@@ -116,11 +117,11 @@ def sync(src, dst, options):
         r_sum = p_out.readline().strip()
 
         if l_sum == r_sum:
-            p_in.write(SAME)
+            p_in.write(SAME+'\r\n')
             p_in.flush()
             same_blocks += 1
         else:
-            p_in.write(DIFF)
+            p_in.write(DIFF+'\r\n')
             p_in.flush()
             p_in.write(l_block)
             p_in.flush()
