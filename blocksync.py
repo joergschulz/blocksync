@@ -81,6 +81,7 @@ def sync(src, dst, options):
 
     print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
 
+    # server
     args = dict(dst)
     args.update({'blocksize': blocksize})
 
@@ -95,7 +96,7 @@ def sync(src, dst, options):
 
     cmd = cmd.split()
 
-    print "Running: %s" % " ".join(cmd)
+    print "server: %s" % " ".join(cmd)
 
     s = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
     s_in, s_out = s.stdin, s.stdout
@@ -103,6 +104,7 @@ def sync(src, dst, options):
     s_size = s_out.readline().strip()
     s_size = int(s_size)
 
+    # client
     args = dict(src)
     args.update({'blocksize': blocksize})
 
@@ -117,7 +119,7 @@ def sync(src, dst, options):
 
     cmd = cmd.split()
 
-    print "Running: %s" % " ".join(cmd)
+    print "client: %s" % " ".join(cmd)
 
     c = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
     c_in, c_out = c.stdin, c.stdout
