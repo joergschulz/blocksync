@@ -127,6 +127,10 @@ def sync(src, dst, options):
     c_size = c_out.readline().strip()
     c_size = int(c_size)
 
+    if c_size != s_size:
+        print "size mismatch"
+        sys.exit(1)
+
     same_blocks = diff_blocks = 0
 
     print "Starting sync..."
@@ -142,6 +146,7 @@ def sync(src, dst, options):
         s_sum = s_out.readline().strip()
         if s_sum == '':
             # TODO
+            # this shouldn't happen for now
             sys.exit(1)
             pass
         if c_sum == s_sum:
