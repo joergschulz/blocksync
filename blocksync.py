@@ -23,6 +23,7 @@ import time
 
 SAME = "same"
 DIFF = "diff"
+ABORT= "abort"
 MIBI = 1024*1024
 
 
@@ -52,10 +53,12 @@ def server(dev, blocksize):
         sys.stdout.write(sum+'\r\n')
         sys.stdout.flush()
         res = sys.stdin.readline().strip()
-        if res != SAME:
+        if res == DIFF:
             newblock = sys.stdin.read(blocksize)
             f.seek(-len(block), 1)
             f.write(newblock)
+        if res == ABORT:
+            sys.exit(0)
 
 
 def client(dev, blocksize):
@@ -68,9 +71,11 @@ def client(dev, blocksize):
         sys.stdout.write(sum+'\r\n')
         sys.stdout.flush()
         res = sys.stdin.readline().strip()
-        if res != SAME:
+        if res == DIFF:
             sys.stdout.write(block)
             sys.stdout.flush()
+        if res == ABORT:
+            sys.exit(0)
 
 
 def sync(src, dst, options):
@@ -129,6 +134,12 @@ def sync(src, dst, options):
 
     if c_size != s_size:
         print "size mismatch"
+        c_out.readline().strip()
+        c_in.write(ABORT+'\r\n')
+        c_in.flush()
+        s_out.readline().strip()
+        s_in.write(ABORT+'\r\n')
+        s_in.flush()
         sys.exit(1)
 
     same_blocks = diff_blocks = 0
