@@ -59,17 +59,13 @@ def server(dev, blocksize):
 def client(dev, blocksize):
     f, size = do_open(dev, 'rb')
 
-    for l_block in getblocks(f, blocksize):
-        l_sum = sha1(l_block).hexdigest()
-        r_sum = sys.stdin.readline().strip()
-
-        if l_sum == r_sum:
-            sys.stdout.write(SAME)
-            sys.stdout.flush()
-        else:
-            sys.stdout.write(DIFF)
-            sys.stdout.flush()
-            sys.stdout.write(l_block)
+    for block in getblocks(f, blocksize):
+        sum = sha1(block).hexdigest()
+        sys.stdout.write(sum+'\r\n')
+        sys.stdout.flush()
+        res = sys.stdin.readline().strip()
+        if res != SAME:
+            sys.stdout.write(block)
             sys.stdout.flush()
 
 
