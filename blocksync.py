@@ -96,6 +96,25 @@ def sync(src, dst, options):
     p = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
     p_in, p_out = p.stdin, p.stdout
 
+    args = dict(src)
+    args.update({'blocksize': blocksize})
+
+    cmd = 'python blocksync.py -b %(blocksize)s client %(path)s' % args
+
+    if src['proto'] == 'ssh':
+        args.update({
+            'compress' : '-C' if compress else '',
+            'user'     : '-l %s' % src['user'] if src['user'] else '',
+        })
+        cmd = 'ssh -c arcfour %(compress)s %(user)s %(host)s ' % args + cmd
+
+    cmd = cmd.split()
+
+    # print "Running: %s" % " ".join(cmd)
+
+    # c = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
+    # c_in, c_out = c.stdin, c.stdout
+
     try:
         f, size = do_open(src['path'], 'rb')
     except Exception, e:
