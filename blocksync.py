@@ -117,39 +117,44 @@ def sync(src, dst, options):
 
     cmd = cmd.split()
 
-    # print "Running: %s" % " ".join(cmd)
+    print "Running: %s" % " ".join(cmd)
 
-    # c = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
-    # c_in, c_out = c.stdin, c.stdout
+    c = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
+    c_in, c_out = c.stdin, c.stdout
 
-    # c_size = c_out.readline().strip()
-    # c_size = int(c_size)
-
-    try:
-        f, size = do_open(src['path'], 'rb')
-    except Exception, e:
-        print "Error accessing source device! %s" % e
-        sys.exit(1)
+    c_size = c_out.readline().strip()
+    c_size = int(c_size)
 
     same_blocks = diff_blocks = 0
 
     print "Starting sync..."
     t0 = time.time()
     t_last = t0
-    size_blocks = size / blocksize
-    for i, l_block in enumerate(getblocks(f, blocksize)):
-        l_sum = sha1(l_block).hexdigest()
-        r_sum = p_out.readline().strip()
-
-        if l_sum == r_sum:
+    size_blocks = c_size / blocksize
+    i = -1
+    while True:
+        i += 1
+        c_sum = c_out.readline().strip()
+        if c_sum == '':
+            break
+        p_sum = p_out.readline().strip()
+        if p_sum == '':
+            # TODO
+            sys.exit(1)
+            pass
+        if c_sum == p_sum:
+            c_in.write(SAME+'\r\n')
+            c_in.flush()
             p_in.write(SAME+'\r\n')
             p_in.flush()
             same_blocks += 1
         else:
+            c_in.write(DIFF+'\r\n')
+            c_in.flush()
+            block = c_out.read(blocksize)
             p_in.write(DIFF+'\r\n')
             p_in.flush()
-            p_in.write(l_block)
-            p_in.flush()
+            p_in.write(block)
             diff_blocks += 1
 
         if progress:
