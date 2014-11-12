@@ -206,6 +206,11 @@ if __name__ == "__main__":
     parser.add_option("-v", "--verbose",   dest="verbose",   action="store_true", default=False, help="be chatty")
     (options, args) = parser.parse_args()
 
+    if len(args) < 2:
+        parser.print_help()
+        print __doc__
+        sys.exit(1)
+
     if args[0] == 'client':
         srcdev = args[1]
         client(srcdev, options.blocksize)
