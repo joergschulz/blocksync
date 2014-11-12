@@ -184,10 +184,16 @@ def sync(src, dst, options):
             t1 = time.time()
             if t1 - t_last > 1 or (same_blocks + diff_blocks) >= size_blocks:
                 rate = (i + 1.0) * blocksize / (MIBI * (t1 - t0))
-                print "\rsame: %d, diff: %d, %d/%d, %5.1f MB/s" % (same_blocks, diff_blocks, same_blocks + diff_blocks, size_blocks, rate),
+                print "\rsame: %d, diff: %d, %d/%d, %5.1f MiB/s" % (same_blocks, diff_blocks, same_blocks + diff_blocks, size_blocks, rate),
                 t_last = t1
 
-    print "\n\nCompleted in %d seconds" % (time.time() - t0)
+    t1 = time.time()
+    rate = (i + 1.0) * blocksize / (MIBI * (t1 - t0))
+    if progress:
+        print
+    else:
+        print "same: %d, diff: %d, %d/%d, %5.1f MiB/s" % (same_blocks, diff_blocks, same_blocks + diff_blocks, size_blocks, rate)
+    print "Completed in %d seconds" % (t1 - t0)
 
     return same_blocks, diff_blocks
 
