@@ -8,11 +8,10 @@ License: GPL
 
 Getting started:
 
-* Copy blocksync.py to the home directory on the remote host
-* Make sure your remote user can either sudo or is root itself.
+* Copy blocksync.py to a bin-directory on the remote host, e.g. /usr/local/bin
 * Make sure your local user can ssh to the remote host
 * Invoke:
-    sudo python blocksync.py /dev/source user@remotehost /dev/dest
+    blocksync.py file:///dev/source ssh://user@remotehost//dev/dest
 """
 
 import re
@@ -93,7 +92,7 @@ def sync(src, dst, options):
     args = dict(dst)
     args.update({'blocksize': blocksize})
 
-    cmd = 'python blocksync.py -b %(blocksize)s server %(path)s' % args
+    cmd = 'blocksync.py -b %(blocksize)s server %(path)s' % args
 
     if dst['proto'] == 'ssh':
         args.update({
@@ -117,7 +116,7 @@ def sync(src, dst, options):
     args = dict(src)
     args.update({'blocksize': blocksize})
 
-    cmd = 'python blocksync.py -b %(blocksize)s client %(path)s' % args
+    cmd = 'blocksync.py -b %(blocksize)s client %(path)s' % args
 
     if src['proto'] == 'ssh':
         args.update({
