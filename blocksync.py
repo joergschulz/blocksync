@@ -84,8 +84,10 @@ def sync(src, dst, options):
     blocksize = options.blocksize
     compress  = options.compress
     progress  = options.progress
+    verbose   = options.verbose
 
-    print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
+    if verbose:
+        print "Block size is %0.1f MB" % (float(blocksize) / MIBI)
 
     # server
     args = dict(dst)
@@ -102,7 +104,8 @@ def sync(src, dst, options):
 
     cmd = cmd.split()
 
-    print "server: %s" % " ".join(cmd)
+    if verbose:
+        print "server: %s" % " ".join(cmd)
 
     s = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
     s_in, s_out = s.stdin, s.stdout
@@ -125,7 +128,8 @@ def sync(src, dst, options):
 
     cmd = cmd.split()
 
-    print "client: %s" % " ".join(cmd)
+    if verbose:
+        print "client: %s" % " ".join(cmd)
 
     c = subprocess.Popen(cmd, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
     c_in, c_out = c.stdin, c.stdout
@@ -193,6 +197,7 @@ if __name__ == "__main__":
     parser.add_option("-b", "--blocksize", dest="blocksize", action="store", type="int", help="block size (bytes)", default=MIBI)
     parser.add_option("-c", "--compress",  dest="compress",  action="store_true", default=False, help="use compression")
     parser.add_option("-p", "--progress",  dest="progress",  action="store_true", default=False, help="display progress")
+    parser.add_option("-v", "--verbose",   dest="verbose",   action="store_true", default=False, help="be chatty")
     (options, args) = parser.parse_args()
 
     if args[0] == 'client':
